@@ -39,6 +39,35 @@ class Settings(BaseSettings):
     claude_max_tokens: int = Field(default=4096, env="CLAUDE_MAX_TOKENS")
     claude_temperature: float = Field(default=0.1, env="CLAUDE_TEMPERATURE")
 
+    # OpenAI Configuration
+    openai_model: str = Field(default="gpt-4-vision-preview", env="OPENAI_MODEL")
+    openai_max_tokens: int = Field(default=4096, env="OPENAI_MAX_TOKENS")
+    openai_temperature: float = Field(default=0.1, env="OPENAI_TEMPERATURE")
+
+    # Google Gemini Configuration
+    gemini_model: str = Field(default="gemini-pro-vision", env="GEMINI_MODEL")
+    gemini_temperature: float = Field(default=0.1, env="GEMINI_TEMPERATURE")
+
+    # Florence-2 Configuration
+    florence_model: str = Field(default="microsoft/Florence-2-large", env="FLORENCE_MODEL")
+    florence_device: str = Field(default="cuda", env="FLORENCE_DEVICE")
+
+    # Ensemble Configuration
+    ensemble_voting_strategy: str = Field(default="weighted", env="ENSEMBLE_VOTING_STRATEGY")
+    minimum_model_agreement: int = Field(default=2, env="MINIMUM_MODEL_AGREEMENT")
+    confidence_threshold: float = Field(default=0.85, env="CONFIDENCE_THRESHOLD")
+
+    # Model Weights for Ensemble Voting
+    model_weights: dict = Field(
+        default={
+            "claude-3-5-sonnet": 0.35,
+            "gpt-4-vision-preview": 0.25,
+            "gemini-pro-vision": 0.20,
+            "florence-2": 0.20
+        },
+        env="MODEL_WEIGHTS"
+    )
+
     # Image Preprocessing Configuration
     image_max_width: int = Field(default=2048, env="IMAGE_MAX_WIDTH")
     image_max_height: int = Field(default=2048, env="IMAGE_MAX_HEIGHT")

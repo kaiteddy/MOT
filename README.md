@@ -15,12 +15,12 @@ This system uses cutting-edge Vision-Language Models (VLMs) to extract MOT remin
 ## Revolutionary Approach
 
 ### Multi-Modal AI Pipeline
-1. **Claude 3.5 Sonnet Vision** - Primary extraction engine
-2. **GPT-4V** - Secondary validation and backup
-3. **Florence-2** - Layout and structure understanding
-4. **Gemini Pro Vision** - Additional validation layer
-5. **Custom ensemble voting** - Consensus across models
-6. **DVLA API integration** - Real-time validation
+1. **Claude 3.5 Sonnet Vision** - Primary extraction engine (35% weight)
+2. **GPT-4 Vision Preview** - Secondary validation and backup (25% weight)
+3. **Gemini Pro Vision** - Google's multimodal AI (20% weight)
+4. **Florence-2** - Microsoft's layout understanding (20% weight)
+5. **Weighted ensemble voting** - Intelligent consensus across models
+6. **DVLA API integration** - Real-time UK vehicle validation
 
 ### Key Features
 
@@ -39,20 +39,20 @@ Screenshot Input
 Image Preprocessing & Enhancement
        ↓
 Multi-Model Extraction Pipeline
-   ├── Claude 3.5 Sonnet Vision
-   ├── GPT-4V
-   ├── Florence-2
-   └── Gemini Pro Vision
+   ├── Claude 3.5 Sonnet Vision (35%)
+   ├── GPT-4 Vision Preview (25%)
+   ├── Gemini Pro Vision (20%)
+   └── Florence-2 (20%)
        ↓
-Ensemble Voting & Consensus
+Weighted Ensemble Voting & Consensus
        ↓
-UK Registration Validation
+UK Registration Format Validation
        ↓
-DVLA API Cross-Validation
+DVLA API Real-time Cross-Validation
        ↓
-Confidence Scoring
+Confidence Scoring & Agreement Analysis
        ↓
-Structured Output / Manual Review
+Structured JSON Output / Manual Review Queue
 ```
 
 ## Quick Start
@@ -88,7 +88,10 @@ cp .env.example .env
 
 ### 3. Test and Run
 ```bash
-# Test system
+# Test all APIs
+python test_all_apis.py
+
+# Test system components
 python test_system.py
 
 # Start API server
