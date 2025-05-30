@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  mot-ocr:
+    build:
+      context: .
+      target: production
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    volumes:
+      - ./uploads:/app/uploads
+      - ./results:/app/results
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - mot-ocr-network
+
+  # Optional: Redis for caching (future enhancement)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - mot-ocr-network
+    profiles:
+      - with-cache
+
+  # Optional: PostgreSQL for result storage (future enhancement)
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: motocr
+      POSTGRES_USER: motocr
+      POSTGRES_PASSWORD: motocr_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - mot-ocr-network
+    profiles:
+      - with-db
+
+  # Optional: Monitoring with Prometheus (future enhancement)
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+    restart: unless-stopped
+    networks:
+      - mot-ocr-network
+    profiles:
+      - with-monitoring
+
+  # Optional: Grafana for visualization (future enhancement)
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: unless-stopped
+    networks:
+      - mot-ocr-network
+    profiles:
+      - with-monitoring
+
+networks:
+  mot-ocr-network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:
+  prometheus_data:
+  grafana_data:
+
+# Usage examples:
+# 
+# Basic deployment:
+# docker-compose up -d
+#
+# With caching:
+# docker-compose --profile with-cache up -d
+#
+# With database:
+# docker-compose --profile with-db up -d
+#
+# Full stack with monitoring:
+# docker-compose --profile with-cache --profile with-db --profile with-monitoring up -d
+#
+# Development mode:
+# docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
